@@ -16,10 +16,12 @@ public class TransactionResponseDTO {
     private LocalDate deliveryDate;
     private Boolean isAnomaly;
     private LocalDateTime createdAt;
+    private String performedByUsername;
+    private String performedByRole;
 
     public TransactionResponseDTO() {}
 
-    public TransactionResponseDTO(Long id, Long productId, String productSku, String productName, TransactionType type, Integer quantity, LocalDate billDate, LocalDate deliveryDate, Boolean isAnomaly, LocalDateTime createdAt) {
+    public TransactionResponseDTO(Long id, Long productId, String productSku, String productName, TransactionType type, Integer quantity, LocalDate billDate, LocalDate deliveryDate, Boolean isAnomaly, LocalDateTime createdAt, String performedByUsername, String performedByRole) {
         this.id = id;
         this.productId = productId;
         this.productSku = productSku;
@@ -30,6 +32,8 @@ public class TransactionResponseDTO {
         this.deliveryDate = deliveryDate;
         this.isAnomaly = isAnomaly;
         this.createdAt = createdAt;
+        this.performedByUsername = performedByUsername;
+        this.performedByRole = performedByRole;
     }
 
     public Long getId() { return id; }
@@ -61,4 +65,10 @@ public class TransactionResponseDTO {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public String getPerformedByUsername() { return performedByUsername; }
+    public void setPerformedByUsername(String performedByUsername) { this.performedByUsername = performedByUsername; }
+
+    public String getPerformedByRole() { return performedByRole; }
+    public void setPerformedByRole(String performedByRole) { this.performedByRole = performedByRole; }
 }

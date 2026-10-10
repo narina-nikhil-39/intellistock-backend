@@ -17,6 +17,10 @@ public class StockTransaction {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User performedBy;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TransactionType type;
@@ -33,8 +37,9 @@ public class StockTransaction {
 
     public StockTransaction() {}
 
-    public StockTransaction(Product product, TransactionType type, Integer quantity, LocalDate billDate, LocalDate deliveryDate, Boolean isAnomaly) {
+    public StockTransaction(Product product, User performedBy, TransactionType type, Integer quantity, LocalDate billDate, LocalDate deliveryDate, Boolean isAnomaly) {
         this.product = product;
+        this.performedBy = performedBy;
         this.type = type;
         this.quantity = quantity;
         this.billDate = billDate;
@@ -55,6 +60,9 @@ public class StockTransaction {
 
     public Product getProduct() { return product; }
     public void setProduct(Product product) { this.product = product; }
+
+    public User getPerformedBy() { return performedBy; }
+    public void setPerformedBy(User performedBy) { this.performedBy = performedBy; }
 
     public TransactionType getType() { return type; }
     public void setType(TransactionType type) { this.type = type; }

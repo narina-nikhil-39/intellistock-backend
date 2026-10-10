@@ -5,10 +5,15 @@ import com.nikhil.IntelliStock.dto.TransactionResponseDTO;
 import com.nikhil.IntelliStock.entity.Product;
 import com.nikhil.IntelliStock.entity.StockTransaction;
 import com.nikhil.IntelliStock.entity.TransactionType;
+import com.nikhil.IntelliStock.entity.User;
 import com.nikhil.IntelliStock.exception.InsufficientStockException;
 import com.nikhil.IntelliStock.exception.ResourceNotFoundException;
 import com.nikhil.IntelliStock.repository.ProductRepository;
 import com.nikhil.IntelliStock.repository.TransactionRepository;
+import com.nikhil.IntelliStock.repository.UserRepository;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,10 +25,12 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
-    public TransactionService(TransactionRepository transactionRepository, ProductRepository productRepository) {
+    public TransactionService(TransactionRepository transactionRepository, ProductRepository productRepository, UserRepository userRepository) {
         this.transactionRepository = transactionRepository;
         this.productRepository = productRepository;
+        this.userRepository = userRepository;
     }
 
     @Transactional
@@ -34,6 +41,15 @@ public class TransactionService {
         if ("End of Life".equalsIgnoreCase(product.getCategory()) && request.getType() == TransactionType.OUTWARD) {
             throw new IllegalArgumentException("Cannot dispatch an End of Life product.");
         }
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getName())) {
+            throw new AccessDeniedException("Authentication is required to record a stock transaction.");
+        }
+        String username = authentication.getName();
+        User performedBy = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Authenticated user not found: " + username));
 
         boolean isAnomaly = detectQuantityAnomaly(product.getId(), request.getQuantity());
 
@@ -51,6 +67,7 @@ public class TransactionService {
 
         StockTransaction transaction = new StockTransaction(
                 product,
+                performedBy,
                 request.getType(),
                 request.getQuantity(),
                 request.getBillDate(),
@@ -91,6 +108,7 @@ public class TransactionService {
     }
 
     private TransactionResponseDTO mapToResponse(StockTransaction tx) {
+        User performedBy = tx.getPerformedBy();
         return new TransactionResponseDTO(
                 tx.getId(),
                 tx.getProduct().getId(),
@@ -101,7 +119,9 @@ public class TransactionService {
                 tx.getBillDate(),
                 tx.getDeliveryDate(),
                 tx.getIsAnomaly(),
-                tx.getCreatedAt()
+                tx.getCreatedAt(),
+                performedBy != null ? performedBy.getUsername() : "System",
+                performedBy != null ? performedBy.getRole().name() : "N/A"
         );
     }
 }
