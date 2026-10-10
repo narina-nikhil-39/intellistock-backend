@@ -35,3 +35,6 @@ build/
 ### OS / Environment ###
 .DS_Store
 Thumbs.db
+
+### Logs ###
+*.log
