@@ -28,6 +28,12 @@ public class ProductController {
         return ResponseEntity.ok(productService.getAllProducts());
     }
 
+    @GetMapping("/low-stock")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    public ResponseEntity<List<ProductResponseDTO>> getLowStockProducts() {
+        return ResponseEntity.ok(productService.getLowStockProducts());
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<ProductResponseDTO> getProductById(@PathVariable Long id) {

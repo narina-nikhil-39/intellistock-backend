@@ -9,10 +9,13 @@ public class ProductResponseDTO {
     private Integer currentStock;
     private Integer safetyStockLevel;
     private Boolean isReorderRecommended;
+    private Integer recommendedReorderQuantity;
 
     public ProductResponseDTO() {}
 
-    public ProductResponseDTO(Long id, String sku, String name, String category, Integer initialStock, Integer currentStock, Integer safetyStockLevel, Boolean isReorderRecommended) {
+    public ProductResponseDTO(Long id, String sku, String name, String category,
+                              Integer initialStock, Integer currentStock, Integer safetyStockLevel,
+                              Boolean isReorderRecommended, Integer recommendedReorderQuantity) {
         this.id = id;
         this.sku = sku;
         this.name = name;
@@ -21,6 +24,7 @@ public class ProductResponseDTO {
         this.currentStock = currentStock;
         this.safetyStockLevel = safetyStockLevel;
         this.isReorderRecommended = isReorderRecommended;
+        this.recommendedReorderQuantity = recommendedReorderQuantity;
     }
 
     public Long getId() { return id; }
@@ -46,4 +50,7 @@ public class ProductResponseDTO {
 
     public Boolean getIsReorderRecommended() { return isReorderRecommended; }
     public void setIsReorderRecommended(Boolean reorderRecommended) { isReorderRecommended = reorderRecommended; }
+
+    public Integer getRecommendedReorderQuantity() { return recommendedReorderQuantity; }
+    public void setRecommendedReorderQuantity(Integer recommendedReorderQuantity) { this.recommendedReorderQuantity = recommendedReorderQuantity; }
 }

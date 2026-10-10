@@ -54,6 +54,13 @@ public class ProductService {
         return mapToResponse(product);
     }
 
+    @Transactional(readOnly = true)
+    public List<ProductResponseDTO> getLowStockProducts() {
+        return productRepository.findLowStockProducts().stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
     // Admin sets product category to End of Life
     @Transactional
     public ProductResponseDTO setProductEndOfLife(Long id) {
@@ -73,7 +80,14 @@ public class ProductService {
     }
 
     public ProductResponseDTO mapToResponse(Product product) {
-        boolean isReorderRecommended = product.getCurrentStock() <= product.getSafetyStockLevel();
+        boolean isEOL = "End of Life".equalsIgnoreCase(product.getCategory());
+        boolean isReorderRecommended = !isEOL && product.getCurrentStock() <= product.getSafetyStockLevel();
+
+        int recommendedQuantity = 0;
+        if (isReorderRecommended) {
+            int targetStock = product.getSafetyStockLevel() * 2;
+            recommendedQuantity = Math.max(0, targetStock - product.getCurrentStock());
+        }
 
         return new ProductResponseDTO(
                 product.getId(),
@@ -83,7 +97,8 @@ public class ProductService {
                 product.getInitialStock(),
                 product.getCurrentStock(),
                 product.getSafetyStockLevel(),
-                isReorderRecommended
+                isReorderRecommended,
+                recommendedQuantity
         );
     }
 }
