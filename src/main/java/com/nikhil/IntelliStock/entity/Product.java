@@ -37,6 +37,15 @@ public class Product {
 
     public Product() {}
 
+    public Product(String sku, String name, String category, Integer initialStock, Integer safetyStockLevel) {
+        this.sku = sku;
+        this.name = name;
+        this.category = category;
+        this.initialStock = initialStock;
+        this.currentStock = initialStock;
+        this.safetyStockLevel = safetyStockLevel;
+    }
+
     public Product(Long id, String sku, String name, String category, Integer initialStock, Integer currentStock, Integer safetyStockLevel) {
         this.id = id;
         this.sku = sku;
