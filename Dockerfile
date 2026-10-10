@@ -24,4 +24,4 @@ COPY --from=build /app/target/*.jar app.jar
 ENV PORT=8080
 EXPOSE ${PORT}
 
-ENTRYPOINT ["sh", "-c", "java -Dserver.port=${PORT} -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "java -Dserver.port=${PORT} -Dspring.datasource.url=\"${SPRING_DATASOURCE_URL}\" -Dspring.datasource.username=\"${SPRING_DATASOURCE_USERNAME}\" -Dspring.datasource.password=\"${SPRING_DATASOURCE_PASSWORD}\" -jar app.jar"]
